@@ -74,6 +74,30 @@ class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Install
     }
 
     /**
+     * Recursively copy a directory from one location to another
+     *
+     * @param   string $src
+     * @oaram   string $dst
+     *
+     * return bool
+     */
+    protected function _recurseCopy($src,$dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while(false !== ( $file = readdir($dir)) ) {
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if ( is_dir($src . '/' . $file) ) {
+                    $this->_recurseCopy($src . '/' . $file,$dst . '/' . $file);
+                }
+                else {
+                    copy($src . '/' . $file,$dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+
+    /**
      * Check file system path
      *
      * @param   string $path
@@ -86,11 +110,13 @@ class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Install
     {
         $res = true;
         $fullPath = dirname(Mage::getRoot()) . $path;
+        $sharedPath = "/mnt/storage/s3" . $path;
+
         if ($mode == self::MODE_WRITE) {
             $setError = false;
             if ($existence) {
                 if ((is_dir($fullPath) && !is_dir_writeable($fullPath)) || !is_writable($fullPath)) {
-                    $setError = true;
+                    $this->_recurseCopy($fullPath, $sharedPath);
                 }
             }
             else {

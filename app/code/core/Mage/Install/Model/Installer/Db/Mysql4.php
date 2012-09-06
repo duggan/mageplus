@@ -60,6 +60,9 @@ class Mage_Install_Model_Installer_Db_Mysql4 extends Mage_Install_Model_Installe
     {
         $variables  = $this->_getConnection()
             ->fetchPairs('SHOW VARIABLES');
-        return (!isset($variables['have_innodb']) || $variables['have_innodb'] != 'YES') ? false : true;
+        if ($variables['table_type'] == 'Xeround') {
+            return true;
+        }
+         return (!isset($variables['have_innodb']) || $variables['have_innodb'] != 'YES') ? false : true;
     }
 }

@@ -88,8 +88,7 @@ class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Install
             if (( $file != '.' ) && ( $file != '..' )) {
                 if ( is_dir($src . '/' . $file) ) {
                     $this->_recurseCopy($src . '/' . $file,$dst . '/' . $file);
-                }
-                else {
+                } else if (hash_file('md5', $src) !== hash_file('md5', $dest)) {
                     copy($src . '/' . $file,$dst . '/' . $file);
                 }
             }

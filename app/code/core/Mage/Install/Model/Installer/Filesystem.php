@@ -82,6 +82,7 @@ class Mage_Install_Model_Installer_Filesystem extends Mage_Install_Model_Install
      * return bool
      */
     protected function _recurseCopy($src,$dst) {
+        error_log("Copying from $src to $dst...");
         $dir = opendir($src);
         @mkdir($dst);
         while(false !== ( $file = readdir($dir)) ) {
